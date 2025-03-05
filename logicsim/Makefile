@@ -1,21 +1,25 @@
-CXX=g++
-CXXFLAGS=-g -Wall -std=c++11
+CXX = g++
+CXXFLAGS = -Wall -g -std=c++11
 
-OBJS=wire.o gate.o circuit.o logicsim.o
-
+# Default target
 all: logicsim
 
-logicsim: $(OBJS)
-	$(CXX) $(CXXFLAGS) $(DEFS) -o $@ $(OBJS)
+# Compile the logic simulator
+logicsim: logicsim.o circuit.o gate.o wire.o
+	$(CXX) $(CXXFLAGS) -o logicsim logicsim.o circuit.o gate.o wire.o ../heap.h
 
-logicsim.o: logicsim.cpp wire.h gate.h circuit.h 
-	$(CXX) $(CXXFLAGS) $(DEFS) -o $@ -c logicsim.cpp
-wire.o: wire.cpp wire.h 
-	$(CXX) $(CXXFLAGS) $(DEFS) -o $@ -c wire.cpp
-gate.o: gate.cpp wire.h
-	$(CXX) $(CXXFLAGS) $(DEFS) -o $@ -c gate.cpp
-circuit.o: circuit.cpp wire.h gate.h event.h
-	$(CXX) $(CXXFLAGS) $(DEFS) -o $@ -c circuit.cpp
+logicsim.o: logicsim.cpp circuit.h gate.h wire.h event.h
+	$(CXX) $(CXXFLAGS) -c logicsim.cpp
 
+circuit.o: circuit.cpp circuit.h gate.h wire.h event.h ../heap.h
+	$(CXX) $(CXXFLAGS) -c circuit.cpp
+
+gate.o: gate.cpp gate.h wire.h event.h
+	$(CXX) $(CXXFLAGS) -c gate.cpp
+
+wire.o: wire.cpp wire.h
+	$(CXX) $(CXXFLAGS) -c wire.cpp
+
+# Clean up object files and executable
 clean:
-	rm -f *.o logicsim
+	rm -f logicsim logicsim.o circuit.o gate.o wire.o
