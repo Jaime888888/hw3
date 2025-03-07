@@ -9,11 +9,9 @@ struct Event
     char state;
 };
 
-struct EventLess
-{
-    bool operator()(const Event* a, const Event* b) const
-    {
-        return a->time > b->time;
+struct EventLess {
+    bool operator()(const Event* e1, const Event* e2) const {
+        return e1->time > e2->time; // Min-heap: earlier events have higher priority
     }
 };
 

@@ -21,10 +21,10 @@ void Gate::wireInput(unsigned int id, Wire* in)
     }
 }
 
-And2Gate::And2Gate(Wire* a, Wire* b, Wire* o) : Gate(2, o)
+And2Gate::And2Gate(Wire* a, Wire* b, Wire* o) : Gate(2,o)
 {
-    wireInput(0, a);
-    wireInput(1, b);
+    wireInput(0,a);
+    wireInput(1,b);
 }
 
 Event* And2Gate::update(uint64_t current_time)
@@ -53,10 +53,10 @@ Event* And2Gate::update(uint64_t current_time)
     return e;
 }
 
-Or2Gate::Or2Gate(Wire* a, Wire* b, Wire* o) : Gate(2, o)
+Or2Gate::Or2Gate(Wire* a, Wire* b, Wire* o) : Gate(2,o)
 {
-    wireInput(0, a);
-    wireInput(1, b);
+    wireInput(0,a);
+    wireInput(1,b);
 }
 
 Event* Or2Gate::update(uint64_t current_time)
@@ -85,25 +85,29 @@ Event* Or2Gate::update(uint64_t current_time)
     return e;
 }
 
-// Implementing NotGate
-NotGate::NotGate(Wire* in, Wire* out) : Gate(1, out)
+// Implementation of NotGate
+NotGate::NotGate(Wire* in, Wire* o) : Gate(1, o)
 {
     wireInput(0, in);
 }
 
 Event* NotGate::update(uint64_t current_time)
 {
-    char state = 'X';
+    char state;
     Event* e = nullptr;
-    
     char in = m_inputs[0]->getState();
-    if (in == '0')
+
+    if (in == '1')
+    {
+        state = '0';
+    }
+    else if (in == '0')
     {
         state = '1';
     }
-    else if (in == '1')
+    else
     {
-        state = '0';
+        state = 'X';
     }
 
     if (state != m_current_state)
