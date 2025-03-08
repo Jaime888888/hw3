@@ -6,9 +6,8 @@
 #include "wire.h"
 
 Gate::Gate(int num_inputs, Wire* output) 
-	: m_output(output), m_inputs(num_inputs), m_delay(0), m_current_state('X')
+	: m_output(output), m_inputs(num_inputs), m_delay(1), m_current_state('X')
 {
-    
 }
 
 Gate::~Gate(){}
@@ -21,30 +20,32 @@ void Gate::wireInput(unsigned int id, Wire* in)
     }
 }
 
-And2Gate::And2Gate(Wire* a, Wire* b, Wire* o) : Gate(2,o)
+And2Gate::And2Gate(Wire* a, Wire* b, Wire* o) : Gate(2, o)
 {
-    wireInput(0,a);
-    wireInput(1,b);
+    wireInput(0, a);
+    wireInput(1, b);
 }
 
 Event* And2Gate::update(uint64_t current_time)
 {
     char state = '1';
     Event* e = nullptr;
-    for(auto w : m_inputs)
+    
+    for (auto w : m_inputs)
     {
         char in = w->getState();
-        if(in == '0')
+        if (in == '0')
         {
             state = '0';
             break;
         }
-        else if(in == 'X')
+        else if (in == 'X')
         {
             state = 'X';
         }
     }
-    if(state != m_current_state)
+
+    if (state != m_current_state || (m_current_state == 'X' && state != 'X'))
     {
         m_current_state = state;
         uint64_t next = current_time + m_delay;
@@ -53,30 +54,32 @@ Event* And2Gate::update(uint64_t current_time)
     return e;
 }
 
-Or2Gate::Or2Gate(Wire* a, Wire* b, Wire* o) : Gate(2,o)
+Or2Gate::Or2Gate(Wire* a, Wire* b, Wire* o) : Gate(2, o)
 {
-    wireInput(0,a);
-    wireInput(1,b);
+    wireInput(0, a);
+    wireInput(1, b);
 }
 
 Event* Or2Gate::update(uint64_t current_time)
 {
     char state = '0';
     Event* e = nullptr;
-    for(auto w : m_inputs)
+
+    for (auto w : m_inputs)
     {
         char in = w->getState();
-        if(in == '1')
+        if (in == '1')
         {
             state = '1';
             break;
         }
-        else if(in == 'X')
+        else if (in == 'X')
         {
             state = 'X';
         }
     }
-    if(state != m_current_state)
+
+    if (state != m_current_state || (m_current_state == 'X' && state != 'X'))
     {
         m_current_state = state;
         uint64_t next = current_time + m_delay;
@@ -110,7 +113,7 @@ Event* NotGate::update(uint64_t current_time)
         state = 'X';
     }
 
-    if (state != m_current_state)
+    if (state != m_current_state || (m_current_state == 'X' && state != 'X'))
     {
         m_current_state = state;
         uint64_t next = current_time + m_delay;
